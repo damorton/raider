@@ -2,6 +2,7 @@
 
 #include "Raider.h"
 #include "RaiderCharacter.h"
+#include "Projectile.h"
 
 ARaiderCharacter::ARaiderCharacter()
 {
@@ -12,6 +13,9 @@ ARaiderCharacter::ARaiderCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	// Bind action in Character class
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ARaiderCharacter::OnFire);
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
@@ -32,4 +36,39 @@ ARaiderCharacter::ARaiderCharacter()
 	TopDownCameraComponent->AttachTo(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+}
+
+void ARaiderCharacter::OnFire()
+{
+	// Try and fire the Projectile
+	if (ProjectileClass != NULL)
+	{
+		// Get the camera trasnform to set the gun muzzle location
+		FVector CameraLoc;
+		FRotator CameraRot;
+		GetActorEyesViewPoint(CameraLoc, CameraRot);
+
+		// Transform MuzzleOffset from Camera Space to World Space before offsetting from the camera
+		FVector const MuzzleLocation = CameraLoc + FTransform(CameraRot).TransformVector(MuzzleOffset);
+		//FRotator MuzzleRotation = CameraRot;
+		FRotator MuzzleRotation = this->GetActorRotation();
+		MuzzleRotation.Pitch += 20.0f;
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+
+			// Spawn the projectile at the muzzle position
+			AProjectile * const Projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+			if (Projectile)
+			{
+				// Find launch direction
+				FVector const LaunchDir = MuzzleRotation.Vector();
+
+				Projectile->InitVelocity(LaunchDir);
+			}
+		}
+	}
 }

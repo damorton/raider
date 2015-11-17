@@ -20,6 +20,18 @@ class ARaiderCharacter : public ACharacter
 public:
 	ARaiderCharacter();
 
+	// Handles firing of projectiles
+	UFUNCTION()
+	void OnFire();
+
+	// Gun muzzles offset from the camera location
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	FVector MuzzleOffset;
+
+	// Projectile class to spawn when firing
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
