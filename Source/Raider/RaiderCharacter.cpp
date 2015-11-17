@@ -13,10 +13,7 @@ ARaiderCharacter::ARaiderCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
-	// Bind action in Character class
-	InputComponent->BindAction("Fire", IE_Pressed, this, &ARaiderCharacter::OnFire);
-
+	
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
@@ -38,11 +35,12 @@ ARaiderCharacter::ARaiderCharacter()
 
 }
 
-void ARaiderCharacter::OnFire()
+void ARaiderCharacter::OnFire(FHitResult Hit)
 {
 	// Try and fire the Projectile
 	if (ProjectileClass != NULL)
-	{
+	{		
+
 		// Get the camera trasnform to set the gun muzzle location
 		FVector CameraLoc;
 		FRotator CameraRot;
@@ -65,9 +63,11 @@ void ARaiderCharacter::OnFire()
 			if (Projectile)
 			{
 				// Find launch direction
-				FVector const LaunchDir = MuzzleRotation.Vector();
+				//FVector const LaunchDir = MuzzleRotation.Vector();
+				//FVector const LaunchDir = Hit.ImpactPoint;
 
-				Projectile->InitVelocity(LaunchDir);
+				Projectile->InitVelocity(Hit.ImpactPoint);
+				//Projectile->InitVelocity(Hit.ImpactPoint);
 			}
 		}
 	}

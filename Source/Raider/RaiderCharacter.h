@@ -19,10 +19,10 @@ class ARaiderCharacter : public ACharacter
 
 public:
 	ARaiderCharacter();
-
+	
 	// Handles firing of projectiles
 	UFUNCTION()
-	void OnFire();
+	void OnFire(FHitResult Hit);
 
 	// Gun muzzles offset from the camera location
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

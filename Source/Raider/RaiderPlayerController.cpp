@@ -3,6 +3,7 @@
 #include "Raider.h"
 #include "RaiderPlayerController.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "RaiderCharacter.h"
 
 ARaiderPlayerController::ARaiderPlayerController()
 {
@@ -26,8 +27,11 @@ void ARaiderPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ARaiderPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ARaiderPlayerController::OnSetDestinationReleased);
+	//InputComponent->BindAction("SetDestination", IE_Pressed, this, &ARaiderPlayerController::OnSetDestinationPressed);
+	//InputComponent->BindAction("SetDestination", IE_Released, this, &ARaiderPlayerController::OnSetDestinationReleased);
+
+	// Bind action in Character class
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ARaiderPlayerController::OnFire);
 
 	// support touch devices 
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ARaiderPlayerController::MoveToTouchLocation);
@@ -37,13 +41,15 @@ void ARaiderPlayerController::SetupInputComponent()
 void ARaiderPlayerController::MoveToMouseCursor()
 {
 	// Trace to see what is under the mouse cursor
-	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
 	if (Hit.bBlockingHit)
 	{
 		// We hit something, move there
 		SetNewMoveDestination(Hit.ImpactPoint);
+
+		// Shoot projectile in the direction of the impact point
+		OnFire();
 	}
 }
 
@@ -87,4 +93,13 @@ void ARaiderPlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
+}
+
+void ARaiderPlayerController::OnFire()
+{
+	ARaiderCharacter* SSChar = Cast<ARaiderCharacter>(GetCharacter());
+	if (SSChar != NULL)
+	{
+		SSChar->OnFire(Hit);
+	}
 }

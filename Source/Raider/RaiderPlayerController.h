@@ -32,6 +32,13 @@ protected:
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+
+	// Handles firing of projectiles
+	UFUNCTION()
+	void OnFire();
+
+	FHitResult Hit;
+
 };
 
 
