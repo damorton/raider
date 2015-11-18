@@ -2,6 +2,7 @@
 
 #include "Raider.h"
 #include "RaiderCharacter.h"
+#include "GameFramework/PlayerController.h"
 #include "Projectile.h"
 
 ARaiderCharacter::ARaiderCharacter()
@@ -91,20 +92,13 @@ void ARaiderCharacter::OnFire()
 
 	FVector LaunchDir;
 
-	FHitResult HitResult;
-	const bool bTraceComplex = false;
+	FHitResult Hit;
+	Controller->CastToPlayerController()->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-	if (PlayerController->GetHitResultAtScreenPosition(MousePosition, ECC_Visibility, bTraceComplex, HitResult) == true)
-	{
-		// If the actor we intersected with is a controller posses it  
-		APawn* ClickedPawn = Cast<APawn>(HitResult.GetActor());
-		if (ClickedPawn != nullptr)
-		{
-			// Unposses ourselves  
-			//PlayerController->UnPossess();
-			// Posses the controller we clicked on  
-			//PlayerController->Possess(ClickedPawn);
-			//LaunchDir = MousePosition;
+	if (Hit.bBlockingHit){
+		if (Hit.Actor != NULL){
+			
+			LaunchDir = Hit.ImpactPoint;
 		}
 	}
 
@@ -130,7 +124,7 @@ void ARaiderCharacter::OnFire()
 			if (Projectile)
 			{
 				// find launch direction
-				FVector const LaunchDir = MuzzleRotation.Vector();
+				FVector const LaunchDir = Hit.ImpactPoint;
 				//Projectile->InitVelocity(LaunchDir);
 				Projectile->InitVelocity(LaunchDir);
 			}
