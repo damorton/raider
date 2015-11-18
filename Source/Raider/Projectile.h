@@ -34,5 +34,9 @@ public:
 	// Projectile movement component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	UProjectileMovementComponent* ProjectileMovement;
+
+	/** called when projectile hits something */
+	UFUNCTION()
+	void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 };

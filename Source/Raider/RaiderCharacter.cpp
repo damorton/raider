@@ -35,39 +35,104 @@ ARaiderCharacter::ARaiderCharacter()
 
 }
 
-void ARaiderCharacter::OnFire(FHitResult Hit)
+void ARaiderCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
-	// Try and fire the Projectile
-	if (ProjectileClass != NULL)
-	{		
+	// set up gameplay key bindings
+	InputComponent->BindAxis("MoveForward", this, &ARaiderCharacter::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &ARaiderCharacter::MoveRight);
 
-		// Get the camera trasnform to set the gun muzzle location
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ARaiderCharacter::OnFire);
+}
+
+void ARaiderCharacter::MoveForward(float axisValue)
+{
+	if ((Controller != NULL) && (axisValue != 0.0f))
+	{
+		// find out which way is forward
+		FRotator Rotation = Controller->GetControlRotation();
+		// Limit pitch when walking or falling
+		if (GetCharacterMovement()->IsMovingOnGround() || GetCharacterMovement()->IsFalling())
+		{
+			Rotation.Pitch = 0.0f;
+		}
+		// add movement in that direction
+		const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
+		AddMovementInput(Direction, axisValue);
+	}
+}
+
+void ARaiderCharacter::MoveRight(float axisValue)
+{
+	if ((Controller != NULL) && (axisValue != 0.0f))
+	{
+		// find out which way is forward
+		FRotator Rotation = Controller->GetControlRotation();
+		// Limit pitch when walking or falling
+		if (GetCharacterMovement()->IsMovingOnGround() || GetCharacterMovement()->IsFalling())
+		{
+			Rotation.Pitch = 0.0f;
+		}
+		// add movement in that direction
+		const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::Y);
+		AddMovementInput(Direction, axisValue);
+	}
+}
+
+
+void ARaiderCharacter::OnFire()
+{
+	// Get the coordinates of the mouse from our controller  
+	float LocationX;
+	float LocationY;
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	PlayerController->GetMousePosition(LocationX, LocationY);
+	FVector2D MousePosition(LocationX, LocationY);
+
+
+	FVector LaunchDir;
+
+	FHitResult HitResult;
+	const bool bTraceComplex = false;
+
+	if (PlayerController->GetHitResultAtScreenPosition(MousePosition, ECC_Visibility, bTraceComplex, HitResult) == true)
+	{
+		// If the actor we intersected with is a controller posses it  
+		APawn* ClickedPawn = Cast<APawn>(HitResult.GetActor());
+		if (ClickedPawn != nullptr)
+		{
+			// Unposses ourselves  
+			//PlayerController->UnPossess();
+			// Posses the controller we clicked on  
+			//PlayerController->Possess(ClickedPawn);
+			//LaunchDir = MousePosition;
+		}
+	}
+
+	// try and fire a projectile
+	if (ProjectileClass != NULL)
+	{
+		// Get the camera transform
 		FVector CameraLoc;
 		FRotator CameraRot;
 		GetActorEyesViewPoint(CameraLoc, CameraRot);
-
-		// Transform MuzzleOffset from Camera Space to World Space before offsetting from the camera
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the camera to find the final muzzle position
 		FVector const MuzzleLocation = CameraLoc + FTransform(CameraRot).TransformVector(MuzzleOffset);
-		//FRotator MuzzleRotation = CameraRot;
-		FRotator MuzzleRotation = this->GetActorRotation();
-		MuzzleRotation.Pitch += 20.0f;
+		FRotator MuzzleRotation = CameraRot;
+		MuzzleRotation.Pitch += 0.0f;          // skew the aim upwards a bit
 		UWorld* const World = GetWorld();
 		if (World)
 		{
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
-
-			// Spawn the projectile at the muzzle position
-			AProjectile * const Projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
+			// spawn the projectile at the muzzle
+			AProjectile* const Projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
 			if (Projectile)
 			{
-				// Find launch direction
-				//FVector const LaunchDir = MuzzleRotation.Vector();
-				//FVector const LaunchDir = Hit.ImpactPoint;
-
-				Projectile->InitVelocity(Hit.ImpactPoint);
-				//Projectile->InitVelocity(Hit.ImpactPoint);
+				// find launch direction
+				FVector const LaunchDir = MuzzleRotation.Vector();
+				//Projectile->InitVelocity(LaunchDir);
+				Projectile->InitVelocity(LaunchDir);
 			}
 		}
 	}
