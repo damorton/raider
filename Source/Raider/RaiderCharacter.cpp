@@ -124,7 +124,7 @@ void ARaiderCharacter::OnFire()
 			if (Projectile)
 			{
 				// find launch direction
-				FVector const LaunchDir = Hit.ImpactPoint;
+				FVector const LaunchDir = (Hit.ImpactPoint - MuzzleLocation).GetSafeNormal();
 				//Projectile->InitVelocity(LaunchDir);
 				Projectile->InitVelocity(LaunchDir);
 			}

@@ -39,6 +39,35 @@ void AMonster::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	APawn *avatar = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if (!avatar) return;
+	FVector toPlayer = avatar->GetActorLocation() -	GetActorLocation();
+	
+	this->GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
+
+	float distanceToPlayer = toPlayer.Size();
+	// If the player is not in the SightSphere of the monster,
+	// go back
+	if (distanceToPlayer > SightSphere->GetScaledSphereRadius())
+	{
+		// If the player is out of sight,
+		// then the enemy cannot chase
+		return;
+	}
+	toPlayer /= distanceToPlayer; // normalizes the vector
+	
+	FRotator Rotation = toPlayer.Rotation();
+	const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
+	AddMovementInput(Direction, Speed * DeltaTime);
+
+	// Actually move the monster towards the player a bit
+	//AddMovementInput(toPlayer, Speed * DeltaTime);
+	// At least face the target
+	// Gets you the rotator to turn something
+	// that looks in the `toPlayer` direction
+	//FRotator toPlayerRotation = toPlayer.Rotation();
+	//toPlayerRotation.Pitch = 0; // 0 off the pitch
+	//RootComponent->SetWorldRotation(toPlayerRotation);
 }
 
 // Called to bind functionality to input
