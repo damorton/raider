@@ -26,6 +26,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+	// For melee weapon
+	virtual void PostInitializeComponents() override;
 	
 	// How fast he is
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
@@ -63,5 +65,14 @@ public:
 	// Range for his attack. Visualizes as a sphere in editor,
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Collision)
 	USphereComponent* AttackRangeSphere;
+
+	// The MeleeWeapon class the monster uses
+	// If this is not set, he uses a melee attack
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
+	UClass* BPMeleeWeapon;
+
+	// The MeleeWeapon instance (set if the character is using
+	// a melee weapon)
+	AActor* MeleeWeapon;
 	
 };

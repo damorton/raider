@@ -14,7 +14,7 @@ AMonster::AMonster()
 
 AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
-	Speed = 20;
+	Speed = 30;
 	HitPoints = 20;
 	Experience = 0;
 	BPLoot = NULL;

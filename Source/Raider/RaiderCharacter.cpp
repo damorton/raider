@@ -93,6 +93,7 @@ void ARaiderCharacter::OnFire()
 	FVector LaunchDir;
 
 	FHitResult Hit;
+	//Controller->CastToPlayerController()->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 	Controller->CastToPlayerController()->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
 	if (Hit.bBlockingHit){
