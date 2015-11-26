@@ -5,13 +5,16 @@
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
+class AMeleeWeapon;
+
 UCLASS()
 class RAIDER_API AMonster : public ACharacter
 {
+
 	GENERATED_BODY()
 	//GENERATED_UCLASS_BODY()
-
 public:
+	
 	// Sets default values for this character's properties
 	AMonster();
 
@@ -41,6 +44,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
 	int32 Experience;
 
+	// The MeleeWeapon class the monster uses
+	// If this is not set, he uses a melee attack
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
+	UClass* BPMeleeWeapon;
+
+	// The MeleeWeapon instance (set if the character is using
+	// a melee weapon)
+	AMeleeWeapon* MeleeWeapon;
+
 	// Blueprint of the type of item dropped by the monster
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
 	UClass* BPLoot;
@@ -65,14 +77,19 @@ public:
 	// Range for his attack. Visualizes as a sphere in editor,
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Collision)
 	USphereComponent* AttackRangeSphere;
-
-	// The MeleeWeapon class the monster uses
-	// If this is not set, he uses a melee attack
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-	UClass* BPMeleeWeapon;
-
-	// The MeleeWeapon instance (set if the character is using
-	// a melee weapon)
-	AActor* MeleeWeapon;
 	
+	inline bool isInAttackRange(float d)
+	{
+		return d < AttackRangeSphere->GetScaledSphereRadius();
+	}
+	inline bool isInSightRange(float d)
+	{
+		return d < SightSphere->GetScaledSphereRadius();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = Collision)
+	bool isInAttackRangeOfPlayer();
+	
+	UFUNCTION(BlueprintCallable, Category = Collision)
+	void SwordSwung();
 };

@@ -43,7 +43,7 @@ void AMeleeWeapon::Prox_Implementation(AActor* OtherActor,
 	if (Swinging && OtherActor != WeaponHolder &&
 		!ThingsHit.Contains(OtherActor))
 	{
-		OtherActor->TakeDamage(AttackDamage + WeaponHolder->BaseAttackDamage, FDamageEvent(), NULL, this);
+		//OtherActor->TakeDamage(AttackDamage + WeaponHolder->BaseAttackDamage, FDamageEvent(), NULL, this);
 		ThingsHit.Add(OtherActor);
 	}
 }

@@ -2,7 +2,9 @@
 
 #include "Raider.h"
 #include "Monster.h"
-
+#include "MeleeWeapon.h"
+//#include "Engine.h"
+#include "RaiderCharacter.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -18,6 +20,7 @@ AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
 	HitPoints = 20;
 	Experience = 0;
 	BPLoot = NULL;
+	MeleeWeapon = NULL;
 	BaseAttackDamage = 1;
 	AttackTimeout = 1.5f;
 	TimeSinceLastStrike = 0;
@@ -39,7 +42,7 @@ void AMonster::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	APawn *avatar = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	ARaiderCharacter *avatar = Cast<ARaiderCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	if (!avatar) return;
 	FVector toPlayer = avatar->GetActorLocation() -	GetActorLocation();
 	
@@ -77,3 +80,38 @@ void AMonster::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 }
 
+void AMonster::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	// instantiate the melee weapon if a bp was selected
+	if (BPMeleeWeapon)
+	{
+		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
+		if (MeleeWeapon)
+		{
+			const USkeletalMeshSocket *meshSocket = (USkeletalMeshSocket*)Mesh->GetSocketByName("RightHandSocket"); // be sure to use correct
+			// socket name!
+			meshSocket->AttachActor(MeleeWeapon, Mesh);
+		}
+	}
+}
+
+bool AMonster::isInAttackRangeOfPlayer()
+{
+	ARaiderCharacter *avatar = Cast<ARaiderCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	if (!avatar) return false;
+
+	FVector playerPos = avatar->GetActorLocation();
+	FVector toPlayer = playerPos - GetActorLocation();
+	float distanceToPlayer = toPlayer.Size();
+
+	return distanceToPlayer < AttackRangeSphere->GetScaledSphereRadius();
+}
+
+void AMonster::SwordSwung()
+{
+	if (MeleeWeapon)
+	{
+		MeleeWeapon->Swing();
+	}
+}
