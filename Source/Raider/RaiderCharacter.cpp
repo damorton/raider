@@ -4,9 +4,13 @@
 #include "RaiderCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "Projectile.h"
+#include "Engine.h"
 
-ARaiderCharacter::ARaiderCharacter()
+ARaiderCharacter::ARaiderCharacter(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
+	Hp = 50;
+	MaxHp = 100;
+
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -14,7 +18,7 @@ ARaiderCharacter::ARaiderCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-	
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
@@ -33,7 +37,12 @@ ARaiderCharacter::ARaiderCharacter()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->AttachTo(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+}
 
+
+void ARaiderCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
 }
 
 void ARaiderCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent)
@@ -132,3 +141,15 @@ void ARaiderCharacter::OnFire()
 		}
 	}
 }
+
+void ARaiderCharacter::ApplyDamage(float damage)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ARaiderCharacter::ApplyDamage()");
+	Hp -= damage;
+	// if he goes below 0 hp, he will die
+	if (Hp <= 0)
+	{
+		Hp = 0; //clamp
+	}
+}
+

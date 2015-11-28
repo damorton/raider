@@ -11,14 +11,14 @@ UCLASS()
 class RAIDER_API AMonster : public ACharacter
 {
 
-	GENERATED_BODY()
-	//GENERATED_UCLASS_BODY()
+	//GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 public:
 	
 	// Sets default values for this character's properties
 	AMonster();
 
-	AMonster(const class FObjectInitializer& PCIP);
+	//AMonster(const class FObjectInitializer& PCIP);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

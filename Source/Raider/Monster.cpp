@@ -3,7 +3,7 @@
 #include "Raider.h"
 #include "Monster.h"
 #include "MeleeWeapon.h"
-//#include "Engine.h"
+#include "Engine.h"
 #include "RaiderCharacter.h"
 
 // Sets default values
@@ -89,9 +89,9 @@ void AMonster::PostInitializeComponents()
 		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
 		if (MeleeWeapon)
 		{
-			const USkeletalMeshSocket *meshSocket = (USkeletalMeshSocket*)Mesh->GetSocketByName("RightHandSocket"); // be sure to use correct
+			const USkeletalMeshSocket *meshSocket = (USkeletalMeshSocket*)GetMesh()->GetSocketByName("RightHandSocket"); // be sure to use correct
 			// socket name!
-			meshSocket->AttachActor(MeleeWeapon, Mesh);
+			meshSocket->AttachActor(MeleeWeapon, GetMesh());
 		}
 	}
 }
