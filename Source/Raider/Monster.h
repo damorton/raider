@@ -1,5 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #pragma once
 
 #include "GameFramework/Character.h"
@@ -30,19 +36,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	// For melee weapon
-	virtual void PostInitializeComponents() override;
-	
+	virtual void PostInitializeComponents() override;	
 	// How fast he is
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-	float Speed;
-
-	// The hitpoints the monster has
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-	float HitPoints;
-
-	// Experience gained for defeating
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-	int32 Experience;
+	float m_fSpeed;
 
 	// The MeleeWeapon class the monster uses
 	// If this is not set, he uses a melee attack
@@ -92,4 +89,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = Collision)
 	void SwordSwung();
+
+	UFUNCTION(BlueprintCallable, Category = Door)
+	void applyDamage(float damage);
+
+	float m_fHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UParticleSystem *m_HitParticle;
 };

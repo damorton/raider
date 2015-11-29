@@ -1,5 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #include "Raider.h"
 #include "Monster.h"
 #include "MeleeWeapon.h"
@@ -16,9 +22,8 @@ AMonster::AMonster()
 
 AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
-	Speed = 30;
-	HitPoints = 20;
-	Experience = 0;
+	m_fSpeed = 30.0f;
+	m_fHealth = 100.0f;
 	BPLoot = NULL;
 	MeleeWeapon = NULL;
 	BaseAttackDamage = 1;
@@ -61,16 +66,7 @@ void AMonster::Tick( float DeltaTime )
 	
 	FRotator Rotation = toPlayer.Rotation();
 	const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
-	AddMovementInput(Direction, Speed * DeltaTime);
-
-	// Actually move the monster towards the player a bit
-	//AddMovementInput(toPlayer, Speed * DeltaTime);
-	// At least face the target
-	// Gets you the rotator to turn something
-	// that looks in the `toPlayer` direction
-	//FRotator toPlayerRotation = toPlayer.Rotation();
-	//toPlayerRotation.Pitch = 0; // 0 off the pitch
-	//RootComponent->SetWorldRotation(toPlayerRotation);
+	AddMovementInput(Direction, m_fSpeed * DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -113,5 +109,22 @@ void AMonster::SwordSwung()
 	if (MeleeWeapon)
 	{
 		MeleeWeapon->Swing();
+	}
+}
+
+void AMonster::applyDamage(float damage)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Applying damage to enemy");
+
+	if (m_HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, m_HitParticle, GetActorLocation());
+	}
+
+	m_fHealth -= damage;
+	if (m_fHealth <= 0)
+	{
+		MeleeWeapon->Destroy();
+		Destroy();
 	}
 }

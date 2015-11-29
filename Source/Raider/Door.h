@@ -1,5 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #pragma once
 
 #include "GameFramework/Actor.h"
@@ -30,4 +36,11 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Door)
 	UStaticMeshComponent *m_Mesh;	
+
+	// Sound for door destruction
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class USoundBase* m_DestructionSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UParticleSystem *m_HitParticle;
 };

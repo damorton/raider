@@ -1,5 +1,12 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #include "Raider.h"
 #include "RaiderCharacter.h"
 #include "GameFramework/PlayerController.h"
@@ -132,6 +139,11 @@ void ARaiderCharacter::OnFire()
 				FVector const LaunchDir = (Hit.ImpactPoint - MuzzleLocation).GetSafeNormal();
 				//Projectile->InitVelocity(LaunchDir);
 				Projectile->InitVelocity(LaunchDir);
+				// try and play the sound if specified
+				if (m_WeaponFireSound != NULL)
+				{
+					UGameplayStatics::PlaySoundAtLocation(this, m_WeaponFireSound, GetActorLocation());
+				}
 			}
 		}
 	}
@@ -139,8 +151,14 @@ void ARaiderCharacter::OnFire()
 
 void ARaiderCharacter::ApplyDamage(float damage)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ARaiderCharacter::ApplyDamage()");
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "ARaiderCharacter::ApplyDamage()");
 	Hp -= damage;
+
+	if (m_HitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, m_HitParticle, GetActorLocation());
+	}
+
 	// if he goes below 0 hp, he will die
 	if (Hp <= 0)
 	{

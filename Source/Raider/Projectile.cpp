@@ -1,9 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #include "Raider.h"
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Door.h"
+#include "Monster.h"
 #include "Engine.h"
 
 // Sets default values
@@ -11,8 +18,6 @@ AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
-	InitialLifeSpan = 3.0f;
 }
 
 AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -37,7 +42,11 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	m_ParticleSystem->bAutoActivate = true;
 	m_ParticleSystem->AttachTo(RootComponent);
 
+	// Life span of projectile object
 	InitialLifeSpan = 3.0f;
+
+	// Damage value applied to objects hit
+	m_fDamage = 10.0f;
 }
 
 
@@ -69,10 +78,19 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hit something...");
 		OtherComp->AddImpulseAtLocation(ProjectileMovement->Velocity * 100.0f, Hit.ImpactPoint);
+
+		// Apply damage to doors
 		if (OtherActor->IsA(ADoor::StaticClass()))
 		{
 			ADoor *door = Cast<ADoor>(OtherActor);
-			door->applyDamage(5);
+			door->applyDamage(m_fDamage);
 		}		
+
+		// Apply damage to enemies
+		if (OtherActor->IsA(AMonster::StaticClass()))
+		{
+			AMonster *monster = Cast<AMonster>(OtherActor);
+			monster->applyDamage(m_fDamage);
+		}
 	}
 }

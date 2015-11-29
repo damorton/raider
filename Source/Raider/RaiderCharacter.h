@@ -1,4 +1,12 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #pragma once
 #include "GameFramework/Character.h"
 #include "RaiderCharacter.generated.h"
@@ -53,4 +61,11 @@ public:
 
 	// Apply damage to the player character
 	void ApplyDamage(float damage);
+
+	// Sound for weapon fire
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class USoundBase* m_WeaponFireSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UParticleSystem *m_HitParticle;
 };

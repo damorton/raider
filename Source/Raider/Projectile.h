@@ -1,5 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//
+// Raider 2015
+//
+// 3D Tower Defense Game 
+//
+// Author: David Morton
+// Date: November 2015
+//
 #pragma once
 
 #include "GameFramework/Actor.h"
@@ -7,6 +13,7 @@
 
 class UProjectileMovementComponent;
 class ADoor;
+class AMonster;
 
 UCLASS()
 class RAIDER_API AProjectile : public AActor
@@ -39,7 +46,12 @@ public:
 	UFUNCTION()
 	void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
+	// Used to check what the projectile hit
 	ADoor *m_Door;
+	AMonster *m_Monster;
+
+	// Projectiles damage value
+	float m_fDamage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
 	UParticleSystemComponent *m_ParticleSystem;
