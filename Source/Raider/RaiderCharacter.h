@@ -51,8 +51,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerProperties)
 	float MaxHp;
 
-	virtual void Tick(float DeltaSeconds) override;
-
 	// Apply damage to the player character
 	void ApplyDamage(float damage);
 };

@@ -40,11 +40,6 @@ ARaiderCharacter::ARaiderCharacter(const class FObjectInitializer& PCIP) : Super
 }
 
 
-void ARaiderCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
 void ARaiderCharacter::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings
@@ -149,7 +144,7 @@ void ARaiderCharacter::ApplyDamage(float damage)
 	// if he goes below 0 hp, he will die
 	if (Hp <= 0)
 	{
-		Hp = 0; //clamp
+		Hp = 0; //clamp		
 	}
 }
 
