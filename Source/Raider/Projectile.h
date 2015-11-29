@@ -6,7 +6,7 @@
 #include "Projectile.generated.h"
 
 class UProjectileMovementComponent;
-class UStaticMeshComponent;
+class ADoor;
 
 UCLASS()
 class RAIDER_API AProjectile : public AActor
@@ -39,4 +39,8 @@ public:
 	UFUNCTION()
 	void OnHit(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
+	ADoor *m_Door;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile)
+	UParticleSystemComponent *m_ParticleSystem;
 };

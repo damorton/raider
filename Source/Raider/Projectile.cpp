@@ -3,6 +3,8 @@
 #include "Raider.h"
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Door.h"
+#include "Engine.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -29,6 +31,11 @@ AProjectile::AProjectile(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 0.3f;
+
+
+	m_ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particles"));
+	m_ParticleSystem->bAutoActivate = true;
+	m_ParticleSystem->AttachTo(RootComponent);
 
 	InitialLifeSpan = 3.0f;
 }
@@ -60,6 +67,12 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 {
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "Hit something...");
 		OtherComp->AddImpulseAtLocation(ProjectileMovement->Velocity * 100.0f, Hit.ImpactPoint);
+		if (OtherActor->IsA(ADoor::StaticClass()))
+		{
+			ADoor *door = Cast<ADoor>(OtherActor);
+			door->applyDamage(5);
+		}		
 	}
 }
