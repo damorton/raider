@@ -23,7 +23,7 @@ AMonster::AMonster()
 AMonster::AMonster(const class FObjectInitializer& PCIP) : Super(PCIP)
 {
 	m_fSpeed = 30.0f;
-	m_fHealth = 100.0f;
+	m_fHealth = 200.0f;
 	BPLoot = NULL;
 	MeleeWeapon = NULL;
 	BaseAttackDamage = 1;
